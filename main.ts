@@ -23,8 +23,8 @@ namespace Filter {
         }
 
         add_measurement(measurement: number) {
-            let length = this.window.unshift(measurement)
-            if (length > this.windowsize) { this.window.pop() }
+            this.window.push(measurement)
+            if (this.window.length > this.windowsize) { this.window.shift() }
         }
     }
 
@@ -61,10 +61,10 @@ namespace Filter {
         }
 
         calculate(): number {
-            const window_with_weights = this.window.map((value, index) => value * (index + 1));
+            const window_ww = this.window.map((value, index) => value * (index + 1));
 
-            let window_weighted_average = 2 * sum(window_with_weights) / (this.windowsize * (this.windowsize + 1))
-            return round(window_weighted_average, 10)
+            let av = 2 * sum(window_ww) / (this.windowsize * (this.windowsize + 1))
+            return round(av, 10)
         }
     }
 
@@ -136,7 +136,6 @@ namespace Filter {
     }
 
     export class NLMS extends windowFilter{
-        mu: number
         h: number[]
 
         constructor(windowsize: number) {
@@ -226,13 +225,6 @@ namespace Filter {
 
             return this.x
         }
-    }
-
-
-    function add_measurement(measurement: number, windowsize: number, list: number[]): number[] {
-        let length = list.unshift(measurement)
-        if (length > windowsize) { list.pop() }
-        return list
     }
 
     function average(array: number[]) {
